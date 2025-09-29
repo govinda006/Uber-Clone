@@ -200,3 +200,53 @@ curl -X POST http://localhost:4000/captain/register \
         }
       }'
 ```
+
+# Authentication Process
+
+## Overview
+
+Our application uses JSON Web Tokens (JWT) for authenticating both users and captains. Upon successful registration or login, a JWT token is generated using a secret key stored in the environment variable `JWT_SECRET`. This token is then sent to the client, typically stored as an HTTP-only cookie or included in the response. For subsequent requests to protected routes, clients must provide the token in the `Authorization` header in the format `Bearer <token>`.
+
+## User Authentication Workflow
+
+1. **Registration:**
+   - **Endpoint:** `POST /users/register`
+   - **Request Data:** Includes `fullname` (with `firstname` and `lastname`), `email`, and `password`.
+   - **Process:** Upon successful registration, a JWT token is generated and sent along with the user details. The token can be stored in a cookie for future authentication.
+
+2. **Login:**
+   - **Endpoint:** `POST /users/login`
+   - **Request Data:** Includes `email` and `password`.
+   - **Process:** The server validates the credentials. If valid, a JWT token is generated and returned in the response (and optionally set as a cookie).
+
+3. **Protected Routes:**
+   - **Example Endpoint:** `GET /users/profile`
+   - **Authentication:** These routes require the JWT token to be supplied either in the `Authorization` header or from an HTTP-only cookie. The authentication middleware verifies the token using `JWT_SECRET`. On failure, a `401 Unauthorized` response is returned.
+
+4. **Logout:**
+   - **Endpoint:** `GET /users/logout`
+   - **Process:** Logging out invalidates the token (either by clearing the cookie or through token blacklisting, if implemented).
+
+## Captain Authentication Workflow
+
+1. **Registration:**
+   - **Endpoint:** `POST /captain/register`
+   - **Request Data:** Includes `fullname`, `email`, `password`, and `vehicle` details (`color`, `plate`, `capacity`, and `vehicleType`).
+   - **Process:** A JWT token is generated upon successful registration and returned in the response.
+
+2. **Login (if implemented):**
+   - A similar process to user login may be used, where captains provide their `email` and `password`. Upon successful validation, a JWT token is generated and provided.
+
+3. **Protected Routes:**
+   - For any protected captain routes, the JWT token must be provided and is verified using the same authentication middleware employed for user endpoints.
+
+## Security Considerations
+
+- **Token Expiry:** Tokens should have an expiry time to enhance security; clients must fetch a new token upon expiration.
+- **HTTP-only Cookies:** When storing tokens in cookies, use HTTP-only flags to prevent access via JavaScript.
+- **Environment Variables:** Sensitive data like `JWT_SECRET` is stored in environment variables to prevent exposure in the codebase.
+- **Input Validation:** All authentication steps enforce rigorous input validation (e.g., using express-validator) to prevent security breaches.
+
+## Summary
+
+Leveraging JWT for both user and captain authentication ensures secure and functional communication between clients and backend services. The process includes issuing tokens upon successful registration or login, requiring valid tokens for protected endpoints, and ensuring secure storage and transport of the tokens.
