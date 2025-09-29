@@ -131,3 +131,72 @@ This endpoint allows an authenticated user to log out. It clears the token cooki
 curl -X POST http://localhost:4000/users/logout \
   -H "Authorization: Bearer <your_token>"
 ```
+
+# Captain Registration Endpoint
+
+## Endpoint
+**POST** `/captain/register`
+
+## Description
+This endpoint allows you to register a new captain by providing the required captain details. The captain must provide valid personal information along with vehicle details.
+
+## Request Data
+The request body must be in JSON format and include the following fields:
+
+- **fullname**: An object containing the captain's names.
+  - **firstname**: *String* (required) - Must be at least 3 characters long.
+  - **lastname**: *String* (required) - Must be at least 3 characters long.
+
+- **email**: *String* (required) - A valid email address.
+
+- **password**: *String* (required) - Must be at least 6 characters long.
+
+- **vehicle**: An object containing the vehicle details.
+  - **color**: *String* (required) - Must be at least 3 characters long.
+  - **plate**: *String* (required) - Must be at least 3 characters long.
+  - **capacity**: *Number* (required) - Must be an integer of at least 1.
+  - **vehicleType**: *String* (required) - Must be one of the following: `car`, `bike`, `auto`.
+
+### Example Request Body
+```json
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Doe"
+  },
+  "email": "jane.doe@example.com",
+  "password": "securePassword123",
+  "vehicle": {
+    "color": "Black",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+## Response Status Codes
+
+- **201 Created**: The captain was successfully registered. The response includes the captain object and may include a JWT token if implemented.
+
+- **400 Bad Request**: The input data failed validation. The response includes an array of error messages detailing the validation issues.
+
+## Example cURL Request
+```bash
+curl -X POST http://localhost:4000/captain/register \
+  -H "Content-Type: application/json" \
+  -d '{
+        "fullname": {
+            "firstname": "Jane",
+            "lastname": "Doe"
+        },
+        "email": "jane.doe@example.com",
+        "password": "securePassword123",
+        "vehicle": {
+            "color": "Black",
+            "plate": "ABC123",
+            "capacity": 4,
+            "vehicleType": "car"
+        }
+      }'
+```
