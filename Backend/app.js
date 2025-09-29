@@ -1,13 +1,15 @@
 const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
-const cosrs = require('cors');
+const cors = require('cors');
 const app = express();
-const connectToDB = require('./db/db');
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+const connectToDb = require('./db/db');
 const userRoutes = require('./routes/user.routes');
-connectToDB();
+connectToDb();
 
-app.use(cosrs());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
