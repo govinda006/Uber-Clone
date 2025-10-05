@@ -1,99 +1,220 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
-
-
+import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { CaptainDataContext } from '../context/CaptainContext';
+import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion'; // ✅ For animations
 
 const CaptainSignup = () => {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [vehicleColor, setVehicleColor] = useState('');
+    const [vehiclePlate, setVehiclePlate] = useState('');
+    const [vehicleCapacity, setVehicleCapacity] = useState('');
+    const [vehicleType, setVehicleType] = useState('');
     const [userData, setUserData] = useState({});
+    const { setCaptain } = useContext(CaptainDataContext);
 
     const submitHandler = (e) => {
         e.preventDefault();
 
-
-        setUserData({
-            fullName: {
-                firstName: firstName,
-                lastName: lastName,
+        const data = {
+            fullname: { firstname: firstName, lastname: lastName },
+            email,
+            password,
+            vehicle: {
+                color: vehicleColor,
+                plate: vehiclePlate,
+                capacity: Number(vehicleCapacity),
+                vehicleType,
             },
-            email: email,
-            password: password
-        });
+        };
+
+        setUserData(data);
+        setCaptain(data);
+        console.log('Captain Signup Data:', data);
+
+        // Reset fields
         setEmail('');
         setPassword('');
         setFirstName('');
         setLastName('');
-    }
+        setVehicleColor('');
+        setVehiclePlate('');
+        setVehicleCapacity('');
+        setVehicleType('');
+    };
 
     return (
-        <div className='p-7 h-screen flex flex-col justify-between'>
-            <div>
-                <img className='w-20 mb-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
-                <form onSubmit={(e) => { submitHandler(e) }}>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 sm:px-8">
+            {/* Card container with motion */}
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-6 sm:p-8"
+            >
+                {/* Logo + Heading */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
+                    className="flex flex-col items-center mb-6"
+                >
+                    <img
+                        className="w-24 sm:w-28 mb-4"
+                        src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
+                        alt="Uber logo"
+                    />
+                    <div className="flex items-center gap-2 group">
+                        <h2 className="text-2xl font-semibold text-gray-900">
+                            Captain Signup
+                        </h2>
+                        <motion.div
+                            whileHover={{ x: 5 }}
+                            transition={{ type: 'spring', stiffness: 200 }}
+                        >
+                            <ArrowRight className="text-black w-6 h-6" />
+                        </motion.div>
+                    </div>
+                </motion.div>
 
-                    <h3 className='text-lg w-full font-medium mb-2' >What's our captain's name</h3>
-
-                    <div className='flex gap-3 mb-5'>
-                        <input
-                            required
-                            className='bg-[#eeeeee] rounded px-4 w-1/2 py-2 border  text-lg placeholder:text-base'
-                            type="text"
-                            placeholder='First Name'
-                            value={firstName}
-                            onChange={(e) => {
-                                setFirstName(e.target.value)
-                            }} />
-                        <input
-                            required
-                            className='bg-[#eeeeee] rounded px-4 w-1/2 py-2 border  text-lg placeholder:text-base'
-                            type="text"
-                            placeholder='Last Name'
-                            value={lastName}
-                            onChange={(e) => {
-                                setLastName(e.target.value)
-                            }} />
+                {/* Form Section */}
+                <form onSubmit={submitHandler} className="space-y-5">
+                    {/* Captain Info */}
+                    <div>
+                        <h3 className="text-lg font-medium mb-2 text-gray-700">
+                            Captain's Name
+                        </h3>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <motion.input
+                                whileFocus={{ scale: 1.02 }}
+                                transition={{ type: 'spring', stiffness: 300 }}
+                                required
+                                className="bg-gray-100 rounded px-4 py-2 border w-full sm:w-1/2 text-lg placeholder:text-base focus:outline-none focus:ring-2 focus:ring-black"
+                                type="text"
+                                placeholder="First Name"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                            />
+                            <motion.input
+                                whileFocus={{ scale: 1.02 }}
+                                transition={{ type: 'spring', stiffness: 300 }}
+                                className="bg-gray-100 rounded px-4 py-2 border w-full sm:w-1/2 text-lg placeholder:text-base focus:outline-none focus:ring-2 focus:ring-black"
+                                type="text"
+                                placeholder="Last Name"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    <h3 className='text-lg font-medium mb-2'>What's our captain's email</h3>
-                    <input
-                        required
-                        className='bg-[#eeeeee] mb-5 rounded px-4 py-2 border w-full text-lg placeholder:text-base'
-                        type="email"
-                        placeholder='email@example.com'
-                        value={email}
-                        onChange={(e) => {
-                            setEmail(e.target.value)
-                        }} />
+                    {/* Email */}
+                    <div>
+                        <h3 className="text-lg font-medium mb-2 text-gray-700">
+                            Captain's Email
+                        </h3>
+                        <motion.input
+                            whileFocus={{ scale: 1.02 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
+                            required
+                            className="bg-gray-100 rounded px-4 py-2 border w-full text-lg placeholder:text-base focus:outline-none focus:ring-2 focus:ring-black"
+                            type="email"
+                            placeholder="email@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
 
-                    <h3 className='text-lg font-medium mb-2'>Enter Password</h3>
+                    {/* Password */}
+                    <div>
+                        <h3 className="text-lg font-medium mb-2 text-gray-700">Password</h3>
+                        <motion.input
+                            whileFocus={{ scale: 1.02 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
+                            required
+                            className="bg-gray-100 rounded px-4 py-2 border w-full text-lg placeholder:text-base focus:outline-none focus:ring-2 focus:ring-black"
+                            type="password"
+                            placeholder="Password (min 6 characters)"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
 
-                    <input
-                        required
-                        className='bg-[#eeeeee] mb-5  rounded px-4 py-2 border w-full text-lg placeholder:text-base'
-                        type="password"
-                        placeholder='password'
-                        value={password}
-                        onChange={(e) => {
-                            setPassword(e.target.value)
-                        }} />
+                    {/* Vehicle Info */}
+                    <div>
+                        <h3 className="text-lg font-medium mb-2 text-gray-700">
+                            Vehicle Details
+                        </h3>
+                        <div className="space-y-3">
+                            {[
+                                { placeholder: 'Vehicle Color', value: vehicleColor, setter: setVehicleColor },
+                                { placeholder: 'Vehicle Plate Number', value: vehiclePlate, setter: setVehiclePlate },
+                                { placeholder: 'Vehicle Capacity', value: vehicleCapacity, setter: setVehicleCapacity, type: 'number' },
+                            ].map((field, i) => (
+                                <motion.input
+                                    key={i}
+                                    whileFocus={{ scale: 1.02 }}
+                                    transition={{ type: 'spring', stiffness: 300 }}
+                                    required
+                                    className="bg-gray-100 rounded px-4 py-2 border w-full text-lg placeholder:text-base focus:outline-none focus:ring-2 focus:ring-black"
+                                    type={field.type || 'text'}
+                                    placeholder={field.placeholder}
+                                    value={field.value}
+                                    onChange={(e) => field.setter(e.target.value)}
+                                />
+                            ))}
 
-                    <button className='bg-[#111] text-white font-semibold mb-3 rounded px-4 py-2 w-full text-lg placeholder:text-base'
-                    >Login</button>
+                            <motion.select
+                                whileFocus={{ scale: 1.02 }}
+                                transition={{ type: 'spring', stiffness: 300 }}
+                                required
+                                className="bg-gray-100 rounded px-4 py-2 border w-full text-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                value={vehicleType}
+                                onChange={(e) => setVehicleType(e.target.value)}
+                            >
+                                <option value="">Select Vehicle Type</option>
+                                <option value="car">Car</option>
+                                <option value="motorcycle">Motorcycle</option>
+                                <option value="auto">Auto</option>
+                            </motion.select>
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <motion.button
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                        type="submit"
+                        className="bg-black text-white font-semibold rounded-lg px-4 py-2 w-full text-lg hover:bg-gray-900 transition"
+                    >
+                        Sign Up
+                    </motion.button>
                 </form>
-                <p className='text-center'>Already have a account ? <Link to='/captain-login' className='text-blue-600'>Login Here</Link>
-                </p>
-            </div>
-            <div>
-                <p className='text-[10px] leading-tight'>This site is protected by reCAPTCHA and the <span className='underline'>Google Privacy
-                    Policy</span> and <span className='underline'>Terms of Service</span> apply.</p>
-            </div>
-        </div>
-    )
-}
 
-export default CaptainSignup
+                {/* Footer */}
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-center mt-4 text-sm text-gray-700"
+                >
+                    Already have an account?{' '}
+                    <Link to="/captain-login" className="text-blue-600 font-medium">
+                        Login Here
+                    </Link>
+                </motion.p>
+
+                <p className="text-[10px] text-gray-500 mt-6 leading-tight text-center">
+                    This site is protected by reCAPTCHA and the{' '}
+                    <span className="underline">Google Privacy Policy</span> and{' '}
+                    <span className="underline">Terms of Service</span> apply.
+                </p>
+            </motion.div>
+        </div>
+    );
+};
+
+export default CaptainSignup;
