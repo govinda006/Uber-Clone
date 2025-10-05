@@ -2,9 +2,14 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { CaptainDataContext } from '../context/CaptainContext';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion'; // ✅ For animations
+import { motion } from 'framer-motion';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CaptainSignup = () => {
+
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -16,10 +21,10 @@ const CaptainSignup = () => {
     const [userData, setUserData] = useState({});
     const { setCaptain } = useContext(CaptainDataContext);
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
 
-        const data = {
+        const captainData = {
             fullname: { firstname: firstName, lastname: lastName },
             email,
             password,
@@ -31,11 +36,15 @@ const CaptainSignup = () => {
             },
         };
 
-        setUserData(data);
-        setCaptain(data);
-        console.log('Captain Signup Data:', data);
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, captainData);
 
-        // Reset fields
+        if (response.status === 201) {
+            const data = response.data;
+            setCaptain(response.data);
+            localStorage.setItem('token', data.token);
+            navigate('/captain-home');
+        }
+
         setEmail('');
         setPassword('');
         setFirstName('');
@@ -47,15 +56,33 @@ const CaptainSignup = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 sm:px-8">
-            {/* Card container with motion */}
+        <div className="min-h-screen flex items-center justify-center px-4 py-8 sm:px-8 relative overflow-hidden bg-gray-50">
+
+            {/* Animated graffiti-style background */}
+            <motion.div
+                className="absolute inset-0 w-full h-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+            >
+                {/* Animated gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300 opacity-30 animate-[pulse_15s_linear_infinite]"></div>
+
+                {/* Subtle abstract shapes */}
+                <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20%" cy="30%" r="100" fill="rgba(255,255,255,0.08)" />
+                    <circle cx="80%" cy="70%" r="150" fill="rgba(255,255,255,0.06)" />
+                    <rect x="50%" y="10%" width="200" height="200" rx="20" fill="rgba(255,255,255,0.04)" />
+                </svg>
+            </motion.div>
+
+            {/* Signup form container */}
             <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
-                className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-6 sm:p-8"
+                className="relative w-full max-w-md bg-white shadow-2xl rounded-2xl p-6 sm:p-8 z-10"
             >
-                {/* Logo + Heading */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -80,9 +107,8 @@ const CaptainSignup = () => {
                     </div>
                 </motion.div>
 
-                {/* Form Section */}
                 <form onSubmit={submitHandler} className="space-y-5">
-                    {/* Captain Info */}
+                    {/* Captain Name */}
                     <div>
                         <h3 className="text-lg font-medium mb-2 text-gray-700">
                             Captain's Name
@@ -142,7 +168,7 @@ const CaptainSignup = () => {
                         />
                     </div>
 
-                    {/* Vehicle Info */}
+                    {/* Vehicle Details */}
                     <div>
                         <h3 className="text-lg font-medium mb-2 text-gray-700">
                             Vehicle Details
@@ -182,7 +208,6 @@ const CaptainSignup = () => {
                         </div>
                     </div>
 
-                    {/* Submit Button */}
                     <motion.button
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
@@ -194,7 +219,6 @@ const CaptainSignup = () => {
                     </motion.button>
                 </form>
 
-                {/* Footer */}
                 <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
