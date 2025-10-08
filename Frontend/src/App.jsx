@@ -11,6 +11,8 @@ import CaptainHome from './pages/CaptainHome'
 import UserProtectedWrapper from './pages/userProtectedWrapper'
 import CaptainProtectedWrapper from './pages/CaptainProtectedWrapper'
 
+
+
 const App = () => {
   return (
     <div>
