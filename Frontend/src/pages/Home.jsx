@@ -83,7 +83,7 @@ const Home = () => {
       </div>
 
       {/* Map Background */}
-      <div className="mt-6 bg-gray-200 w-full flex-1 rounded-xl shadow-inner overflow-hidden flex items-center justify-center">
+      <div className="mt-1 bg-gray-200 w-full flex-1 rounded-xl shadow-inner overflow-hidden flex items-center justify-center">
         <img src="/Screenshot 2025-10-06 135209.png" className="w-full h-full object-cover" />
       </div>
 
